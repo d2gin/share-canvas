@@ -14,17 +14,26 @@
     import {useWebsocket} from "@/lib/WebsocketService";
     import {Blackboard} from "@/lib/Blackboard";
     import config from "@/config";
-    import {onBeforeRouteLeave, useRouter} from "vue-router";
+    import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 
     var canvas = ref();
     var mouse: Mouse;
     var brush: Brush;
     var router = useRouter();
+    var route = useRoute();
     var webSocket = useWebsocket();
     onMounted(() => {
-        if (!config.observeRoom) {
+        let roomId = route.query.room;
+        if (!roomId) {
             alert('非法闯入');
             router.push('/');
+        }
+        webSocket.send({
+            type: "system-subcribe-room",
+            data: {id: roomId,}
+        });
+        if(config.rooms) {
+            config.observeRoom = config.rooms[roomId];
         }
         let ctx = canvas.value.getContext('2d');
         let blackboard = new Blackboard(ctx);

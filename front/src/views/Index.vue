@@ -45,6 +45,7 @@
             "type": "system-get-rooms",
         }).then((res: any) => {
             rooms.value = res.data;
+            config.rooms = res.data;
         });
     }
 
@@ -64,11 +65,7 @@
 
     function handleObserve(room: any) {
         config.observeRoom = room;
-        webSocket.send({
-            type: "system-subcribe-room",
-            data: {id: room.id,}
-        });
-        router.push('/observe');
+        router.push(`/observe?room=${room.id}`);
     }
 </script>
 <style lang="scss">
